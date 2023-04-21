@@ -5,7 +5,7 @@ import java.util.*;
 public class Main {
 
     public static int k;
-    public static int maxIterations = 100000;
+    public static int maxIterations;
     public static ArrayList<Value> arr;
     public static ArrayList<Cluster> clusters;
 
@@ -15,25 +15,19 @@ public class Main {
     }
 
     public Main(){
-        Scanner scanner = new Scanner(System.in);
-        try {
-            arr = new ArrayList<>();
-            Scanner s = new Scanner(new File("iris_training.txt"));
-            while (s.hasNext()) {
-                Value value = new Value(s.nextLine().split("\t"));
-                arr.add(value);
-            }
-            s.close();
-
+            Scanner scanner = new Scanner(System.in);
+            importData("iris_training.txt"); //importData("iris_test.txt");
             System.out.println("Podaj k: (lub -1 by zakonczyc)");
             k = scanner.nextInt();
+            System.out.println("Podaj maksymalna ilosc iteracji: (lub -1)");
+            maxIterations = scanner.nextInt();
+
             initializeClusters();
             int iteration = 0;
             boolean changed = true;
-            while (iteration < maxIterations && changed) {
-                double sumDistances = calculateSumDistances();
-                System.out.println("Sum of distances in iteration " + iteration + ": " + sumDistances);
-                iteration++;
+
+            while ((iteration++ < maxIterations || maxIterations == -1) && changed) {
+                System.out.println("Sum of distances in iteration " + iteration + ": " +  calculateSumDistances());
                 changed =  groupValues();
             }
             for (Cluster cluster : clusters) {
@@ -41,17 +35,25 @@ public class Main {
                 System.out.println("Entropy: " + calculateEntropy(cluster));
             }
 
+
+    }
+    public void importData(String name){
+        try {
+            arr = new ArrayList<>();
+            Scanner s = new Scanner(new File(name));
+            while (s.hasNext()) {
+                arr.add(new Value(s.nextLine().split("\t")));
+            }
+            s.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
     }
     public static double calculateSumDistances() {
         double sumDistances = 0;
         for (Cluster cluster : clusters) {
             for (Value value : cluster.values) {
-                double distance = distance(value, cluster.centroid);
-                sumDistances += distance;
+                sumDistances += distance(value, cluster.centroid);
             }
         }
         return sumDistances;
@@ -60,8 +62,7 @@ public class Main {
     public static double calculateEntropy(Cluster cluster) {
         HashMap<String, Integer> countByClass = new HashMap<>();
         for (Value value : cluster.values) {
-            String className = value.name;
-            countByClass.put(className, countByClass.getOrDefault(className, 0) + 1);
+            countByClass.put(value.name, countByClass.getOrDefault(value.name, 0) + 1);
         }
         double entropy = 0;
         for (int count : countByClass.values()) {
@@ -78,7 +79,6 @@ public class Main {
             Value centroid = tmp.get((int) (Math.random() * tmp.size()));
             tmp.remove(centroid);
             clusters.add(new Cluster(centroid));
-
         }
     }
     public boolean groupValues() {
