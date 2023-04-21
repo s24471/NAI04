@@ -14,11 +14,11 @@ public class Value {
 
     @Override
     public String toString() {
-        String ans = "";
+        StringBuilder ans = new StringBuilder();
         for (Double d : arr) {
-            ans += d.toString() + "\t";
+            ans.append(d.toString()).append("\t");
         }
-        ans += name;
-        return ans;
+        ans.append(name);
+        return ans.toString();
     }
 }

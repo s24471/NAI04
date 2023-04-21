@@ -90,7 +90,7 @@ public class Main {
 
         for (Value value : arr) {
             double minDistance = Double.MAX_VALUE;
-            Cluster nearestCluster = null;
+            Cluster nearestCluster = clusters.get(0);
 
             for (Cluster cluster : clusters) {
                 double distance = distance(value, cluster.centroid);
@@ -99,11 +99,9 @@ public class Main {
                     nearestCluster = cluster;
                 }
             }
-
             nearestCluster.addValue(value);
         }
 
-        // Calculate the new centroid for each cluster
         for (Cluster cluster : clusters) {
             ArrayList<Double> oldCentroid = cluster.centroid;
             cluster.newCentroid();

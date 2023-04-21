@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.util.ArrayList;
 
 public class Cluster {
@@ -35,12 +34,12 @@ public class Cluster {
     }
     @Override
     public String toString() {
-        String s = "Centroid: " + centroid.toString() + "\n";
-        s += "Values:\n";
+        StringBuilder s = new StringBuilder("Centroid: " + centroid.toString() + "\n");
+        s.append("Values:\n");
         for (Value value : values) {
-            s += value.toString() + "\n";
+            s.append(value.toString()).append("\n");
         }
-        return s;
+        return s.toString();
     }
 
 }
